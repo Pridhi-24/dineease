@@ -36,9 +36,9 @@
     </div>
   </div>
   <div class="card"><h3>Today's walk-ins</h3>
-    <p th:each="w : ${walkins}"><span th:text="${w.customerName} + ' &middot; ' + ${w.partySize} + ' guests &middot; T' + ${@fmt.tableNo(w.tableId)} + ' &middot; ' + ${@fmt.time(w.arrivalTime)}"></span>
+    <div th:each="w : ${walkins}" style="margin:.6em 0"><span th:text="${w.customerName} + ' &middot; ' + ${w.partySize} + ' guests &middot; T' + ${@fmt.tableNo(w.tableId)} + ' &middot; ' + ${@fmt.time(w.arrivalTime)}"></span>
       <span class="badge b-completed" th:if="${w.released}">released</span>
-      <form class="inline" th:unless="${w.released}" th:action="@{/admin/walkins/{id}/release(id=${w.walkinId})}" method="post"><button class="btn btn-o btn-sm">Release table</button></form></p>
+      <form class="inline" th:unless="${w.released}" th:action="@{/admin/walkins/{id}/release(id=${w.walkinId})}" method="post"><button class="btn btn-o btn-sm">Release table</button></form></div>
     <div class="empty" th:if="${walkins.isEmpty()}">No walk-ins today.</div></div>
 </div>
 </main>
