@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Admin - Edit reservation')}"></head>
+<body>
+<div class="adm">
+<aside th:replace="~{fragments :: adminSide}"></aside>
+<main class="main">
+<h2 th:text="'Reservation RSV-' + ${r.reservationId}">Reservation</h2>
+<form class="card" style="max-width:520px" th:action="@{/admin/reservations/{id}/edit(id=${r.reservationId})}" method="post">
+  <p><b>Customer:</b> <span th:text="${@fmt.name(r.userId)} + ' (' + ${@fmt.phone(r.userId)} + ')'"></span><br>
+     <b>Party:</b> <span th:text="${r.partySize}"></span> &middot; <b>Status:</b> <span class="badge" th:classappend="'b-' + ${r.status}" th:text="${r.status}"></span></p>
+  <div class="f"><label for="date">Date</label><input id="date" type="date" name="date" th:value="${r.reservationDate}" required></div>
+  <div class="f"><label for="time">Time</label><select id="time" name="time"><option th:each="t : ${times}" th:value="${t}" th:text="${@fmt.time(t)}" th:selected="${t==r.reservationTime}"></option></select></div>
+  <div class="f"><label for="tableId">Table</label><select id="tableId" name="tableId"><option th:each="t : ${allTables}" th:value="${t.tableId}" th:text="'Table ' + ${t.tableNumber} + ' (seats ' + ${t.capacity} + ')'" th:selected="${t.tableId==r.tableId}"></option></select></div>
+  <div class="row"><a class="btn btn-o" th:href="@{/admin/reservations}">Back</a><button class="btn btn-p">Save changes</button></div>
+</form>
+</main>
+</div>
+<div th:replace="~{fragments :: toasts}"></div>
+</body>
+</html>

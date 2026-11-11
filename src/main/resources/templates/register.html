@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Sign up')}"></head>
+<body>
+<div th:replace="~{fragments :: nav}"></div>
+<div class="wrap"><form class="card" style="max-width:480px;margin:48px auto" th:action="@{/register}" method="post" novalidate>
+  <h2>Create your account</h2>
+  <div th:replace="~{fragments :: field('fullName','Full name','text')}"></div>
+  <div th:replace="~{fragments :: field('email','Email address','email')}"></div>
+  <div th:replace="~{fragments :: field('phone','Phone number','tel')}"></div>
+  <div th:replace="~{fragments :: pwfield('password','Password')}"></div>
+  <div th:replace="~{fragments :: pwfield('confirm','Confirm password')}"></div>
+  <button class="btn btn-p" style="width:100%">Sign up</button>
+  <p class="c sm">Already registered? <a th:href="@{/login}">Log in</a></p>
+</form></div>
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: toasts}"></div>
+</body>
+</html>

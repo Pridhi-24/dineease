@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Admin - Waitlist')}"></head>
+<body>
+<div class="adm">
+<aside th:replace="~{fragments :: adminSide}"></aside>
+<main class="main">
+<h2>Waitlist</h2>
+<div class="card tw">
+  <table th:if="${!list.isEmpty()}">
+    <thead><tr><th>ID</th><th>Guest</th><th>Party</th><th>Seating</th><th>Queue</th><th>Est. wait</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody><tr th:each="w : ${list}">
+      <td th:text="'WL-' + ${w.waitlistId}">1</td>
+      <td th:text="${w.guestName != null} ? ${w.guestName} : ${@fmt.name(w.userId)}">Guest</td>
+      <td th:text="${w.partySize}">2</td><td th:text="${locs.get(w.seatingPreference)}">Indoor</td>
+      <td th:text="${@availabilityService.position(w) == 0} ? '-' : ${@availabilityService.position(w)}">1</td>
+      <td th:text="${@availabilityService.eta(w)}">estimate</td>
+      <td><form class="inline" th:action="@{/admin/waitlist/{id}/status(id=${w.waitlistId})}" method="post"><select name="status" class="auto" onchange="this.form.submit()"><option th:each="s : ${statuses}" th:value="${s}" th:text="${s}" th:selected="${s==w.status}"></option></select></form></td>
+      <td>
+        <form class="inline" th:action="@{/admin/waitlist/{id}/assign(id=${w.waitlistId})}" method="post"><button class="btn btn-gold btn-sm">Assign table</button></form>
+        <form class="inline" th:action="@{/admin/waitlist/{id}/remove(id=${w.waitlistId})}" method="post" data-confirm="Remove this entry?"><button class="btn btn-d btn-sm">Remove</button></form>
+      </td></tr></tbody>
+  </table>
+  <div class="empty" th:if="${list.isEmpty()}">The waitlist is empty.</div>
+</div>
+</main>
+</div>
+<div th:replace="~{fragments :: toasts}"></div>
+</body>
+</html>

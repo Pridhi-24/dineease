@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Admin - Overview')}"></head>
+<body>
+<div class="adm">
+<aside th:replace="~{fragments :: adminSide}"></aside>
+<main class="main">
+<h2>Overview</h2>
+<div class="grid g4">
+  <div class="card stat" th:each="c : ${cards}"><span class="mut sm" th:text="${c.key}">Label</span><b th:text="${c.value}">0</b></div>
+</div>
+<div class="grid g2" style="margin-top:22px">
+  <div class="card"><h3>Reservation trends</h3>
+    <div class="trend"><div th:each="d : ${trend}"><span th:text="${d.n}">0</span><i th:style="'height:' + ${d.pct * 0.8} + '%'"></i><small th:text="${d.label}">1 Jan</small></div></div></div>
+  <div class="card"><h3>Status distribution</h3>
+    <div class="dist" th:each="d : ${dist}"><span th:text="${d.label}">pending</span><div class="bar" th:style="'width:' + ${d.pct} + '%'"></div><b th:text="${d.n}">0</b></div></div>
+  <div class="card"><h3>Recent bookings</h3>
+    <p th:each="r : ${recent}" style="margin:.3em 0"><span th:text="${@fmt.name(r.userId)} + ' &middot; T' + ${@fmt.tableNo(r.tableId)} + ' &middot; ' + ${@fmt.date(r.reservationDate)} + ' ' + ${@fmt.time(r.reservationTime)}"></span> <span class="badge" th:classappend="'b-' + ${r.status}" th:text="${r.status}"></span></p>
+    <p class="mut" th:if="${recent.isEmpty()}">Nothing yet.</p></div>
+  <div class="card"><h3>Upcoming reservations</h3>
+    <p th:each="r : ${upcoming}" style="margin:.3em 0"><span th:text="${@fmt.name(r.userId)} + ' &middot; T' + ${@fmt.tableNo(r.tableId)} + ' &middot; ' + ${@fmt.date(r.reservationDate)} + ' ' + ${@fmt.time(r.reservationTime)}"></span> <span class="badge" th:classappend="'b-' + ${r.status}" th:text="${r.status}"></span></p>
+    <p class="mut" th:if="${upcoming.isEmpty()}">Nothing yet.</p></div>
+</div>
+</main>
+</div>
+<div th:replace="~{fragments :: toasts}"></div>
+</body>
+</html>

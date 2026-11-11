@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Contact')}"></head>
+<body>
+<div th:replace="~{fragments :: nav}"></div>
+<div th:replace="~{fragments :: pageHead('Contact','We would love to hear from you')}"></div>
+<section class="sec"><div class="wrap grid g2">
+  <form class="card" th:action="@{/contact}" method="post" novalidate>
+    <h3>Send a message</h3>
+    <div th:replace="~{fragments :: field('name','Your name','text')}"></div>
+    <div th:replace="~{fragments :: field('email','Email','email')}"></div>
+    <div class="f"><label for="message">Message</label><textarea id="message" name="message" rows="4" th:text="${f?.get('message')}"></textarea><small class="err" th:text="${errors?.get('message')}"></small></div>
+    <button class="btn btn-p">Send message</button>
+  </form>
+  <div class="card"><h3>Visit us</h3><p>12 Orchard Lane, Old Town<br>+91 98000 12345<br>hello@dineease.com</p><p class="mut">Mon&ndash;Fri 12:00&ndash;22:30 &middot; Sat&ndash;Sun 11:30&ndash;23:00</p></div>
+</div></section>
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: toasts}"></div>
+</body>
+</html>

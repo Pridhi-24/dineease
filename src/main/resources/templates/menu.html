@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Our Menu')}"></head>
+<body>
+<div th:replace="~{fragments :: nav}"></div>
+<div th:replace="~{fragments :: pageHead('Our Menu','Seasonal, thoughtfully sourced')}"></div>
+<section class="sec"><div class="wrap"><div th:replace="~{fragments :: menuBlock}"></div></div></section>
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: toasts}"></div>
+</body>
+</html>

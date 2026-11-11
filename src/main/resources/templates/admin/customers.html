@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Admin - Customers')}"></head>
+<body>
+<div class="adm">
+<aside th:replace="~{fragments :: adminSide}"></aside>
+<main class="main">
+<h2>Customers</h2>
+<form class="f" th:action="@{/admin/customers}" method="get" style="display:flex;gap:10px"><input name="q" placeholder="Search name, email or phone" th:value="${q}"><button class="btn btn-p btn-sm">Search</button></form>
+<div class="card tw">
+  <table th:if="${!list.isEmpty()}">
+    <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Registered</th><th>History</th></tr></thead>
+    <tbody><tr th:each="u : ${list}"><td th:text="${u.fullName}">Name</td><td th:text="${u.email}">Email</td><td th:text="${u.phone}">Phone</td><td th:text="${@fmt.date(u.createdAt)}">Date</td><td th:text="${counts.getOrDefault(u.userId, 0L)} + ' bookings'">0 bookings</td></tr></tbody>
+  </table>
+  <div class="empty" th:if="${list.isEmpty()}">No customers found.</div>
+</div>
+</main>
+</div>
+<div th:replace="~{fragments :: toasts}"></div>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Booking details')}"></head>
+<body>
+<div th:replace="~{fragments :: nav}"></div>
+<div th:replace="~{fragments :: pageHead('Booking details','Your reservation confirmation')}"></div>
+<section class="sec"><div class="wrap" style="max-width:520px"><div class="card">
+  <h3 th:text="'Reservation RSV-' + ${r.reservationId}">Reservation</h3>
+  <p><b>Table:</b> <span th:text="${@fmt.tableNo(r.tableId)}"></span><br>
+     <b>When:</b> <span th:text="${@fmt.date(r.reservationDate)} + ' &middot; ' + ${@fmt.time(r.reservationTime)}"></span><br>
+     <b>Guests:</b> <span th:text="${r.partySize}"></span> &middot; <span th:text="${locs.get(r.seatingPreference)}"></span><br>
+     <b>Status:</b> <span class="badge" th:classappend="'b-' + ${r.status}" th:text="${r.status}"></span></p>
+  <p th:if="${!r.occasion.isEmpty()}"><b>Occasion:</b> <span th:text="${r.occasion}"></span></p>
+  <p th:if="${!r.specialRequests.isEmpty()}"><b>Requests:</b> <span th:text="${r.specialRequests}"></span></p>
+  <a class="btn btn-o" th:href="@{/dashboard}">Back to dashboard</a>
+</div></div></section>
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: toasts}"></div>
+</body>
+</html>

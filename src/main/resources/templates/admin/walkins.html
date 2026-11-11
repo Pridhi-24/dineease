@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Admin - Walk-ins')}"></head>
+<body>
+<div class="adm">
+<aside th:replace="~{fragments :: adminSide}"></aside>
+<main class="main">
+<h2>Walk-ins</h2>
+<div class="grid g2">
+  <div>
+    <form class="card" th:action="@{/admin/walkins/suggest}" method="post" novalidate>
+      <h3>Register walk-in</h3>
+      <div class="f"><label for="customerName">Customer name</label><input id="customerName" name="customerName" th:value="${f?.get('customerName')}"><small class="err" th:text="${errors?.get('customerName')}"></small></div>
+      <div class="f"><label for="phone">Phone number</label><input id="phone" name="phone" type="tel" th:value="${f?.get('phone')}"><small class="err" th:text="${errors?.get('phone')}"></small></div>
+      <div class="f"><label for="party">Number of guests</label><input id="party" name="party" type="number" min="1" max="12" th:value="${f != null} ? ${f.get('party')} : 2"><small class="err" th:text="${errors?.get('party')}"></small></div>
+      <div class="f"><label for="arrival">Arrival time</label><input id="arrival" name="arrival" type="time" th:value="${f != null} ? ${f.get('arrival')} : ${nowSlot}"></div>
+      <div class="f"><label for="pref">Seating preference</label><select id="pref" name="pref"><option th:each="e : ${locs}" th:value="${e.key}" th:text="${e.value}" th:selected="${f != null and f.get('pref')==e.key}"></option></select></div>
+      <button class="btn btn-p">Check availability</button>
+    </form>
+    <div class="card" style="margin-top:16px" th:if="${checked}">
+      <div th:if="${sug != null}">
+        <h3 th:text="'Suggested: Table ' + ${sug.table.tableNumber}">Suggested</h3>
+        <p th:text="'Seats ' + ${sug.table.capacity} + ' &middot; ' + ${locs.get(sug.table.location)} + (${sug.prefMatch} ? '' : ' (preferred seating unavailable)')"></p>
+        <form th:action="@{/admin/walkins/assign}" method="post">
+          <input type="hidden" name="customerName" th:value="${f.get('customerName')}"><input type="hidden" name="phone" th:value="${f.get('phone')}">
+          <input type="hidden" name="party" th:value="${f.get('party')}"><input type="hidden" name="arrival" th:value="${f.get('arrival')}">
+          <input type="hidden" name="pref" th:value="${f.get('pref')}"><input type="hidden" name="tableId" th:value="${sug.table.tableId}">
+          <button class="btn btn-gold">Assign table</button></form>
+      </div>
+      <div th:if="${sug == null}">
+        <h3>No table available</h3><p class="mut">Nothing suitable is free at this time. Add the party to the waitlist instead?</p>
+        <form th:action="@{/admin/walkins/waitlist}" method="post">
+          <input type="hidden" name="customerName" th:value="${f.get('customerName')}"><input type="hidden" name="party" th:value="${f.get('party')}"><input type="hidden" name="pref" th:value="${f.get('pref')}">
+          <button class="btn btn-gold">Add to waitlist</button></form>
+      </div>
+    </div>
+  </div>
+  <div class="card"><h3>Today's walk-ins</h3>
+    <p th:each="w : ${walkins}"><span th:text="${w.customerName} + ' &middot; ' + ${w.partySize} + ' guests &middot; T' + ${@fmt.tableNo(w.tableId)} + ' &middot; ' + ${@fmt.time(w.arrivalTime)}"></span>
+      <span class="badge b-completed" th:if="${w.released}">released</span>
+      <form class="inline" th:unless="${w.released}" th:action="@{/admin/walkins/{id}/release(id=${w.walkinId})}" method="post"><button class="btn btn-o btn-sm">Release table</button></form></p>
+    <div class="empty" th:if="${walkins.isEmpty()}">No walk-ins today.</div></div>
+</div>
+</main>
+</div>
+<div th:replace="~{fragments :: toasts}"></div>
+</body>
+</html>

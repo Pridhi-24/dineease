@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${title} + ' - DineEase'">DineEase</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <script th:src="@{/js/app.js}" defer></script>
+</head>
+<body>
+
+<header class="nav" th:fragment="nav">
+  <a class="brand" th:href="@{/}">Dine<b>Ease</b></a>
+  <button class="burger" type="button" data-burger aria-label="Menu">&#9776;</button>
+  <nav id="nl">
+    <a th:href="@{/}" th:classappend="${uri=='/'} ? 'on'">Home</a>
+    <a th:href="@{/about}" th:classappend="${uri=='/about'} ? 'on'">About Us</a>
+    <a th:href="@{/menu}" th:classappend="${uri=='/menu'} ? 'on'">Our Menu</a>
+    <a th:href="@{/reserve}" th:classappend="${#strings.startsWith(uri,'/reserve')} ? 'on'">Reservations</a>
+    <a th:href="@{/waitlist}" th:classappend="${uri=='/waitlist'} ? 'on'">Waitlist</a>
+    <a th:href="@{/contact}" th:classappend="${uri=='/contact'} ? 'on'">Contact</a>
+    <th:block th:if="${user != null}">
+      <a th:href="${user.role=='admin'} ? @{/admin} : @{/dashboard}" th:text="${user.fullName}">Profile</a>
+      <a th:href="@{/logout}">Log out</a>
+    </th:block>
+    <a th:if="${user == null}" class="btn btn-gold btn-sm" th:href="@{/login}">Login / Sign Up</a>
+  </nav>
+</header>
+
+<div id="toasts" th:fragment="toasts">
+  <div class="toast" th:if="${msg}" th:text="${msg}"></div>
+  <div class="toast err" th:if="${error}" th:text="${error}"></div>
+</div>
+
+<footer class="foot" th:fragment="footer">
+  <div class="wrap grid g3">
+    <div><h3>DineEase</h3><p style="opacity:.8">An experience worth reserving.</p></div>
+    <div><h3>Explore</h3><a th:href="@{/about}">About Us</a><a th:href="@{/menu}">Our Menu</a><a th:href="@{/reserve}">Reservations</a><a th:href="@{/waitlist}">Waitlist</a></div>
+    <div><h3>Visit</h3><a>12 Orchard Lane, Old Town</a><a>hello@dineease.com</a><a th:href="@{/contact}">Instagram &middot; Facebook &middot; X</a></div>
+  </div>
+  <div class="wrap c sm" style="opacity:.6;margin-top:28px">&copy; 2026 DineEase. All rights reserved.</div>
+</footer>
+
+<section class="alt" style="padding:48px 0" th:fragment="pageHead(title,sub)">
+  <div class="wrap c"><h1 style="font-size:clamp(2rem,5vw,3.2rem)" th:text="${title}">Title</h1><p class="mut" style="margin:0" th:text="${sub}">Sub</p></div>
+</section>
+
+<section class="sec" th:fragment="about">
+  <div class="wrap grid g2" style="align-items:center">
+    <div class="ph big"><span style="font:600 2.4rem var(--serif);color:var(--gold)">DineEase</span></div>
+    <div><div class="eyebrow">About DineEase</div><h2>Seasonal cooking, a warm room, your table waiting</h2>
+      <p>DineEase is a neighbourhood restaurant built around unhurried evenings: candlelit tables, produce from nearby farms and a team that remembers how you like to be looked after.</p>
+      <p>Every table is assigned with care, so whether it is an anniversary for two or a family celebration for eight, you are seated exactly where the evening feels best.</p></div>
+  </div>
+</section>
+
+<section class="sec alt" th:fragment="why">
+  <div class="wrap">
+    <div class="c" style="margin-bottom:36px"><div class="eyebrow">Why choose us</div><h2>Dining, made effortless</h2></div>
+    <div class="grid g4">
+      <div class="card c"><h3>Easy reservations</h3><p class="mut">Book in under a minute, any time of day.</p></div>
+      <div class="card c"><h3>Smart table allocation</h3><p class="mut">Transparent rules match your party to the right table.</p></div>
+      <div class="card c"><h3>Comfortable seating</h3><p class="mut">Indoor, window-side and garden terrace tables.</p></div>
+      <div class="card c"><h3>Booking management</h3><p class="mut">View, change or cancel from your dashboard.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" th:fragment="hours">
+  <div class="wrap grid g2">
+    <div class="card"><h3>Opening hours</h3><p>Monday &ndash; Friday: 12:00 &ndash; 22:30<br>Saturday &ndash; Sunday: 11:30 &ndash; 23:00</p><p class="mut sm">Last reservation at 21:30.</p></div>
+    <div class="card"><h3>Find us</h3><p>12 Orchard Lane, Old Town<br>+91 98000 12345 &middot; hello@dineease.com</p><a class="btn btn-o btn-sm" th:href="@{/contact}">Contact us</a></div>
+  </div>
+</section>
+
+<section class="sec alt" th:fragment="testi">
+  <div class="wrap">
+    <div class="c" style="margin-bottom:36px"><div class="eyebrow">Guests say</div><h2>Kind words</h2></div>
+    <div class="grid g3">
+      <div class="card"><p>&ldquo;The booking was effortless and our window table was perfect for our anniversary.&rdquo;</p><b>Meera K.</b> <span style="color:var(--gold)">&#9733;&#9733;&#9733;&#9733;&#9733;</span></div>
+      <div class="card"><p>&ldquo;They found a table for our family of seven within minutes. Wonderful service.&rdquo;</p><b>Rahul S.</b> <span style="color:var(--gold)">&#9733;&#9733;&#9733;&#9733;&#9733;</span></div>
+      <div class="card"><p>&ldquo;The waitlist updates were honest and the lamb was unforgettable.&rdquo;</p><b>Ananya D.</b> <span style="color:var(--gold)">&#9733;&#9733;&#9733;&#9733;&#9733;</span></div>
+    </div>
+  </div>
+</section>
+
+<div th:fragment="menuBlock">
+  <div class="tabs"><a th:each="c : ${cats}" class="tab" th:classappend="${c==cat} ? 'on'" th:href="@{${base}(cat=${c})}" th:text="${c}">Starters</a></div>
+  <div class="grid g3">
+    <article class="card dish" th:each="i : ${items}">
+      <div class="ph" th:style="'background:linear-gradient(135deg,' + ${grad} + ')'"><span style="font:600 1.4rem var(--serif);color:#fff;opacity:.85" th:text="${cat}">Category</span></div>
+      <div class="pad"><div class="between"><h3 style="margin:0" th:text="${i.name}">Dish</h3><span class="price" th:text="'&#8377;' + ${i.price}">&#8377;0</span></div>
+        <p class="mut" style="margin:.4em 0 0" th:text="${i.desc}">Description</p></div>
+    </article>
+  </div>
+</div>
+
+<div class="f" th:fragment="field(name,label,type)">
+  <label th:for="${name}" th:text="${label}">Label</label>
+  <input th:id="${name}" th:name="${name}" th:attr="type=${type}" th:value="${f?.get(name)}">
+  <small class="err" th:text="${errors?.get(name)}"></small>
+</div>
+
+<div class="f" th:fragment="pwfield(name,label)">
+  <label th:for="${name}" th:text="${label}">Password</label>
+  <div class="pw"><input th:id="${name}" th:name="${name}" type="password"><button type="button" class="eye sm" data-eye>Show</button></div>
+  <small class="err" th:text="${errors?.get(name)}"></small>
+</div>
+
+<div class="steps" th:fragment="steps(n)">
+  <span th:each="s, i : ${ {'Details','Seating','Tables','Summary','Confirmed'} }" th:classappend="${i.count==n} ? 'on'" th:text="${i.count} + '. ' + ${s}">1. Details</span>
+</div>
+
+<div class="tw" th:fragment="resTable(list,empty)">
+  <table th:if="${!list.isEmpty()}">
+    <thead><tr><th>ID</th><th>When</th><th>Table</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      <tr th:each="r : ${list}">
+        <td th:text="'RSV-' + ${r.reservationId}">RSV-1</td>
+        <td th:text="${@fmt.date(r.reservationDate)} + ' &middot; ' + ${@fmt.time(r.reservationTime)}">When</td>
+        <td th:text="'Table ' + ${@fmt.tableNo(r.tableId)} + ' &middot; ' + ${r.partySize} + ' guests'">Table</td>
+        <td><span class="badge" th:classappend="'b-' + ${r.status}" th:text="${r.status}">pending</span></td>
+        <td>
+          <a class="btn btn-o btn-sm" th:href="@{/reservations/{id}(id=${r.reservationId})}">View</a>
+          <form class="inline" th:if="${(r.status=='pending' or r.status=='confirmed') and !r.reservationDate.isBefore(today)}"
+                th:action="@{/reservations/{id}/cancel(id=${r.reservationId})}" method="post" data-confirm="Cancel this reservation? This cannot be undone.">
+            <button class="btn btn-d btn-sm">Cancel</button></form>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="empty" th:if="${list.isEmpty()}"><p th:text="${empty}">Nothing here yet.</p><a class="btn btn-gold btn-sm" th:href="@{/reserve}">Reserve a table</a></div>
+</div>
+
+<aside class="side" th:fragment="adminSide">
+  <a class="brand" th:href="@{/}">Dine<b style="color:var(--gold)">Ease</b></a>
+  <a th:href="@{/admin}" th:classappend="${uri=='/admin'} ? 'on'">Overview</a>
+  <a th:href="@{/admin/reservations}" th:classappend="${#strings.startsWith(uri,'/admin/reservations')} ? 'on'">Reservations</a>
+  <a th:href="@{/admin/tables}" th:classappend="${#strings.startsWith(uri,'/admin/tables')} ? 'on'">Tables</a>
+  <a th:href="@{/admin/walkins}" th:classappend="${#strings.startsWith(uri,'/admin/walkins')} ? 'on'">Walk-ins</a>
+  <a th:href="@{/admin/waitlist}" th:classappend="${#strings.startsWith(uri,'/admin/waitlist')} ? 'on'">Waitlist</a>
+  <a th:href="@{/admin/customers}" th:classappend="${#strings.startsWith(uri,'/admin/customers')} ? 'on'">Customers</a>
+  <a th:href="@{/}">View site</a>
+  <a th:href="@{/logout}">Log out</a>
+</aside>
+</body>
+</html>

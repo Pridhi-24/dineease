@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Admin - Reservations')}"></head>
+<body>
+<div class="adm">
+<aside th:replace="~{fragments :: adminSide}"></aside>
+<main class="main">
+<h2>Reservations</h2>
+<form class="filters" th:action="@{/admin/reservations}" method="get">
+  <input name="q" placeholder="Search ID, name, phone" th:value="${q}">
+  <input type="date" name="date" th:value="${date}">
+  <select name="status"><option value="">All statuses</option><option th:each="s : ${statuses}" th:value="${s}" th:text="${s}" th:selected="${s==status}"></option></select>
+  <select name="minParty"><option value="0">Any party size</option><option th:each="n : ${ {2,4,6,8} }" th:value="${n}" th:text="${n} + '+ guests'" th:selected="${n==minParty}"></option></select>
+  <button class="btn btn-p btn-sm">Filter</button><a class="btn btn-o btn-sm" th:href="@{/admin/reservations}">Reset</a>
+</form>
+<div class="card tw">
+  <table th:if="${!list.isEmpty()}">
+    <thead><tr><th>ID</th><th>Customer</th><th>Contact</th><th>Table</th><th>Date</th><th>Time</th><th>Party</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>
+      <tr th:each="r : ${list}">
+        <td th:text="'RSV-' + ${r.reservationId}">1</td><td th:text="${@fmt.name(r.userId)}">Name</td><td th:text="${@fmt.phone(r.userId)}">Phone</td>
+        <td th:text="'T' + ${@fmt.tableNo(r.tableId)}">T1</td><td th:text="${@fmt.date(r.reservationDate)}">Date</td><td th:text="${@fmt.time(r.reservationTime)}">Time</td>
+        <td th:text="${r.partySize}">2</td><td><span class="badge" th:classappend="'b-' + ${r.status}" th:text="${r.status}">pending</span></td>
+        <td>
+          <a class="btn btn-o btn-sm" th:href="@{/admin/reservations/{id}/edit(id=${r.reservationId})}">View / Modify</a>
+          <form class="inline" th:if="${r.status=='pending'}" th:action="@{/admin/reservations/{id}/status(id=${r.reservationId})}" method="post"><input type="hidden" name="status" value="confirmed"><button class="btn btn-p btn-sm">Confirm</button></form>
+          <form class="inline" th:if="${r.status=='confirmed'}" th:action="@{/admin/reservations/{id}/status(id=${r.reservationId})}" method="post"><input type="hidden" name="status" value="completed"><button class="btn btn-gold btn-sm">Complete</button></form>
+          <form class="inline" th:if="${r.status=='pending' or r.status=='confirmed'}" th:action="@{/admin/reservations/{id}/status(id=${r.reservationId})}" method="post" data-confirm="Cancel this reservation?"><input type="hidden" name="status" value="cancelled"><button class="btn btn-d btn-sm">Cancel</button></form>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="empty" th:if="${list.isEmpty()}">No reservations match your filters.</div>
+</div>
+</main>
+</div>
+<div th:replace="~{fragments :: toasts}"></div>
+</body>
+</html>

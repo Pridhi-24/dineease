@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Home')}"></head>
+<body>
+<div th:replace="~{fragments :: nav}"></div>
+<section class="hero"><div class="wrap">
+  <div class="eyebrow">DineEase &middot; Fine dining</div>
+  <h1>An Experience Worth Reserving.</h1>
+  <p>Seasonal plates, a candlelit room and a table held just for you. Choose your date and we will find the seat that suits your party.</p>
+  <div class="row"><a class="btn btn-gold" th:href="@{/reserve}">Reserve a Table</a><a class="btn btn-o" style="color:#F8F5EF" th:href="@{/menu}">Explore Our Menu</a></div>
+</div></section>
+<div th:replace="~{fragments :: about}"></div>
+<section class="sec alt"><div class="wrap">
+  <div class="c" style="margin-bottom:36px"><div class="eyebrow">Featured menu</div><h2>From our kitchen</h2></div>
+  <div th:replace="~{fragments :: menuBlock}"></div>
+</div></section>
+<div th:replace="~{fragments :: why}"></div>
+<div th:replace="~{fragments :: hours}"></div>
+<div th:replace="~{fragments :: testi}"></div>
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: toasts}"></div>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Log in')}"></head>
+<body>
+<div th:replace="~{fragments :: nav}"></div>
+<div class="wrap"><form class="card" style="max-width:480px;margin:48px auto" th:action="@{/login}" method="post" novalidate>
+  <h2>Welcome back</h2>
+  <p class="mut sm">Demo: guest@dineease.com / Guest@123 &middot; admin@dineease.com / Admin@123</p>
+  <div th:replace="~{fragments :: field('email','Email','email')}"></div>
+  <div th:replace="~{fragments :: pwfield('password','Password')}"></div>
+  <div class="between f"><label class="sm"><input type="checkbox" name="remember" style="width:auto"> Remember me</label><a href="#" class="sm" onclick="alert('Demo: a reset link would be emailed here.');return false">Forgot password?</a></div>
+  <button class="btn btn-p" style="width:100%">Log in</button>
+  <p class="c sm">New here? <a th:href="@{/register}">Create an account</a></p>
+</form></div>
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: toasts}"></div>
+</body>
+</html>

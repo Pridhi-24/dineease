@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Waitlist')}"></head>
+<body>
+<div th:replace="~{fragments :: nav}"></div>
+<div th:replace="~{fragments :: pageHead('Waitlist','Fully booked? Join the queue and we will notify you.')}"></div>
+<section class="sec"><div class="wrap grid g2">
+  <form class="card" th:action="@{/waitlist/join}" method="post" novalidate>
+    <h3>Join the waitlist</h3>
+    <div class="f"><label for="party">Number of guests</label><input id="party" name="party" type="number" min="1" max="12" value="2"></div>
+    <div class="f"><label for="pref">Preferred seating</label><select id="pref" name="pref"><option th:each="e : ${locs}" th:value="${e.key}" th:text="${e.value}"></option></select></div>
+    <p class="mut sm">Waiting times are estimates based on queue position and typical table turnover, not guarantees.</p>
+    <button class="btn btn-p">Join waitlist</button>
+  </form>
+  <div>
+    <h3>Your waitlist entries</h3>
+    <div class="card" style="margin-bottom:14px" th:each="w : ${mine}">
+      <div class="between"><b th:text="'WL-' + ${w.waitlistId}">WL-1</b>
+        <span class="badge" th:classappend="'b-' + ${#strings.replace(#strings.toLowerCase(w.status),' ','-')}" th:text="${w.status}">Waiting</span></div>
+      <p class="mut sm" th:text="${w.partySize} + ' guests &middot; ' + ${locs.get(w.seatingPreference)} + (${w.tableId != null} ? ' &middot; Table ' + ${@fmt.tableNo(w.tableId)} + ' ready' : '')"></p>
+      <p>Queue position: <b th:text="${@availabilityService.position(w) == 0} ? '-' : ${@availabilityService.position(w)}">1</b> &middot; Est. wait: <b th:text="${@availabilityService.eta(w)}">estimate</b></p>
+      <form th:if="${w.status=='Waiting' or w.status=='Table Available' or w.status=='Notified'}" th:action="@{/waitlist/{id}/cancel(id=${w.waitlistId})}" method="post" data-confirm="Leave the waitlist?"><button class="btn btn-o btn-sm">Cancel entry</button></form>
+    </div>
+    <div class="card empty" th:if="${mine.isEmpty()}" th:text="${user != null} ? 'You are not on the waitlist.' : 'Log in to join and track the waitlist.'"></div>
+  </div>
+</div></section>
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: toasts}"></div>
+</body>
+</html>

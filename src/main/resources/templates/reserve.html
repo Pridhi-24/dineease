@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Reservations')}"></head>
+<body>
+<div th:replace="~{fragments :: nav}"></div>
+<div th:replace="~{fragments :: pageHead('Reserve a table','Five simple steps to your evening')}"></div>
+<section class="sec"><div class="wrap" style="max-width:860px">
+<div th:replace="~{fragments :: steps(${step})}"></div>
+
+<!-- Step 1: details -->
+<form th:if="${step==1}" class="card" th:action="@{/reserve/details}" method="post" novalidate>
+  <h3>Reservation details</h3>
+  <div class="two">
+    <div class="f"><label for="date">Date</label><input id="date" name="date" type="date" th:min="${today}" th:value="${draft.date}"><small class="err" th:text="${errors?.get('date')}"></small></div>
+    <div class="f"><label for="time">Preferred time</label><select id="time" name="time"><option th:each="t : ${times}" th:value="${t}" th:text="${@fmt.time(t)}" th:selected="${t==draft.time}"></option></select><small class="err" th:text="${errors?.get('time')}"></small></div>
+  </div>
+  <div class="two">
+    <div class="f"><label for="party">Number of guests</label><input id="party" name="party" type="number" min="1" max="12" th:value="${draft.party}"><small class="err" th:text="${errors?.get('party')}"></small></div>
+    <div class="f"><label for="occasion">Special occasion (optional)</label><select id="occasion" name="occasion"><option th:each="o : ${ {'','Birthday','Anniversary','Business dinner','Other'} }" th:value="${o}" th:text="${o.isEmpty()} ? 'None' : ${o}" th:selected="${o==draft.occasion}"></option></select></div>
+  </div>
+  <div class="f"><label for="requests">Special requests (optional)</label><textarea id="requests" name="requests" rows="3" th:text="${draft.requests}"></textarea></div>
+  <button class="btn btn-p">Continue</button>
+</form>
+
+<!-- Step 2: seating -->
+<form th:if="${step==2}" class="card" th:action="@{/reserve/seating}" method="post">
+  <h3>Seating preference</h3>
+  <div class="grid g4">
+    <label th:each="e : ${locs}" class="card opt c" th:classappend="${draft.pref==e.key} ? 'sel'">
+      <input type="radio" name="pref" th:value="${e.key}" th:checked="${draft.pref==e.key}"><b th:text="${e.value}">Indoor</b>
+    </label>
+  </div>
+  <div class="row" style="margin-top:20px"><a class="btn btn-o" th:href="@{/reserve}">Back</a><button class="btn btn-p">Show available tables</button></div>
+</form>
+
+<!-- Step 3: smart table matcher -->
+<div th:if="${step==3}" class="card">
+  <h3>Available tables</h3>
+  <p class="mut sm" th:text="${@fmt.date(draft.date)} + ' &middot; ' + ${@fmt.time(draft.time)} + ' &middot; ' + ${draft.party} + ' guests &middot; ' + ${locs.get(draft.pref)} + ' &middot; 90-minute seating'">Summary</p>
+  <p class="sm"><span class="badge b-available">available</span> <span class="badge b-reserved">reserved</span> <span class="badge b-occupied">occupied</span> <span class="badge b-unavailable">unavailable</span></p>
+  <div class="card" th:if="${!anyOk}" style="border-color:var(--gold);margin-bottom:16px">
+    <b>No suitable table is free at this time.</b>
+    <p class="mut">Try another time, or join the waitlist and we will notify you.</p>
+    <a class="btn btn-gold btn-sm" th:href="@{/waitlist}">Join the waitlist</a>
+  </div>
+  <div class="grid g3">
+    <div th:each="v : ${views}" class="card tcard" th:classappend="${v.recommended ? 'rec ' : ''} + ${v.ok ? '' : 'off'}">
+      <div class="between"><h3 style="margin:0" th:text="'Table ' + ${v.table.tableNumber}">Table 1</h3><span class="badge b-rec" th:if="${v.recommended}">&#9733; Recommended</span></div>
+      <div class="tv"><i th:each="n : ${#numbers.sequence(1, v.table.capacity)}"></i></div>
+      <p class="mut sm" th:text="'Seats ' + ${v.table.capacity} + ' &middot; ' + ${locs.get(v.table.location)}">Seats 2</p>
+      <div class="between">
+        <span class="badge" th:classappend="'b-' + ${v.state}" th:text="${v.state}">available</span>
+        <form th:if="${v.ok}" th:action="@{/reserve/select}" method="post"><input type="hidden" name="tableId" th:value="${v.table.tableId}"><button class="btn btn-p btn-sm">Select</button></form>
+        <span class="mut sm" th:if="${v.state=='available' and !v.fits}">Too small</span>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-top:18px"><a class="btn btn-o" th:href="@{/reserve/seating}">Back</a></div>
+</div>
+
+<!-- Step 4: summary -->
+<div th:if="${step==4}" class="card">
+  <h3>Booking summary</h3>
+  <div class="two">
+    <p><b>Guest</b><br><span th:if="${user!=null}" th:text="${user.fullName} + ' / ' + ${user.phone}"></span><span th:if="${user==null}" class="mut">Log in to complete your booking</span></p>
+    <p><b>When</b><br><span th:text="${@fmt.date(draft.date)}"></span><br><span th:text="${@fmt.time(draft.time)}"></span></p>
+    <p><b>Table</b><br><span th:text="'Table ' + ${table.tableNumber} + ' (seats ' + ${table.capacity} + ')'"></span></p>
+    <p><b>Party / seating</b><br><span th:text="${draft.party} + ' guests &middot; ' + ${locs.get(draft.pref)}"></span></p>
+  </div>
+  <p class="mut sm" th:if="${!draft.occasion.isEmpty() or !draft.requests.isEmpty()}" th:text="${draft.occasion} + ' ' + ${draft.requests}"></p>
+  <div class="row"><a class="btn btn-o" th:href="@{/reserve/tables}">Back</a>
+    <form th:action="@{/reserve/confirm}" method="post"><button class="btn btn-gold" th:text="${user!=null} ? 'Confirm reservation' : 'Log in to confirm'">Confirm</button></form></div>
+</div>
+
+<!-- Step 5: confirmation -->
+<div th:if="${step==5}" class="card c">
+  <h2>Reservation received</h2>
+  <p class="mut">A confirmation will follow once the restaurant confirms your booking.</p>
+  <div class="card" style="text-align:left;max-width:420px;margin:18px auto">
+    <p><b>Reservation ID:</b> <span th:text="'RSV-' + ${r.reservationId}"></span><br>
+      <b>Table:</b> <span th:text="${@fmt.tableNo(r.tableId)}"></span><br>
+      <b>Date:</b> <span th:text="${@fmt.date(r.reservationDate)}"></span><br>
+      <b>Time:</b> <span th:text="${@fmt.time(r.reservationTime)}"></span><br>
+      <b>Guests:</b> <span th:text="${r.partySize}"></span><br>
+      <b>Status:</b> <span class="badge" th:classappend="'b-' + ${r.status}" th:text="${r.status}"></span></p>
+  </div>
+  <a class="btn btn-p" th:href="@{/dashboard}">Go to dashboard</a>
+</div>
+</div></section>
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: toasts}"></div>
+</body>
+</html>

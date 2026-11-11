@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Dashboard')}"></head>
+<body>
+<div th:replace="~{fragments :: nav}"></div>
+<section class="alt" style="padding:48px 0"><div class="wrap c"><h1 style="font-size:clamp(2rem,5vw,3.2rem)" th:text="'Welcome, ' + ${user.fullName.split(' ')[0]}">Welcome</h1><p class="mut" style="margin:0">Manage your bookings and profile</p></div></section>
+<section class="sec"><div class="wrap grid" style="gap:28px">
+  <div class="card"><h3>Upcoming reservations</h3><div th:replace="~{fragments :: resTable(${upcoming},'No upcoming reservations yet.')}"></div></div>
+  <div class="grid g2">
+    <div class="card"><h3>Booking history</h3><div th:replace="~{fragments :: resTable(${past},'Your past bookings will appear here.')}"></div></div>
+    <div class="grid">
+      <form class="card" th:action="@{/profile}" method="post" novalidate>
+        <h3>Profile</h3><p class="mut sm" th:text="${user.email}">email</p>
+        <div class="f"><label for="fullName">Full name</label><input id="fullName" name="fullName" th:value="${user.fullName}"></div>
+        <div class="f"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" th:value="${user.phone}"></div>
+        <button class="btn btn-p btn-sm">Update profile</button>
+      </form>
+      <div class="card"><h3>Waitlist status</h3>
+        <p th:each="w : ${waits}"><span th:text="'WL-' + ${w.waitlistId}"></span> <span class="badge" th:classappend="'b-' + ${#strings.replace(#strings.toLowerCase(w.status),' ','-')}" th:text="${w.status}"></span> &middot; <span th:text="${@availabilityService.eta(w)}"></span></p>
+        <p class="mut" th:if="${waits.isEmpty()}">No waitlist entries.</p>
+        <a class="btn btn-o btn-sm" th:href="@{/waitlist}">Open waitlist</a></div>
+    </div>
+  </div>
+</div></section>
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: toasts}"></div>
+</body>
+</html>
