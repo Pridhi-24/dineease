@@ -14,7 +14,7 @@ A full-stack restaurant reservation website written in **Java 17** with **Spring
 ```bash
 mvn spring-boot:run
 ```
-Open http://localhost:8080. Demo data is created on first start.
+Open [http://localhost:8080](https://dineease-ox0p.onrender.com). Demo data is created on first start.
 
 | Role | Email | Password |
 |------|-------|----------|
